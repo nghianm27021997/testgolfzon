@@ -12,6 +12,8 @@
     "next": "latest",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-lazy-load": "^4.0.1",
+    "react-lazy-load-image-component": "^1.5.6",
     "virtualizedtableforantd4": "^1.2.2"
   }
 }

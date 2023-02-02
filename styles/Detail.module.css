@@ -5,7 +5,7 @@
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
-  margin-top: 2rem;
+  margin-top: 20rem;
   border: 0px solid lightgray;
 }
 
@@ -32,11 +32,13 @@
 }
 
 .buttonNext {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 .lazyloadImage {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

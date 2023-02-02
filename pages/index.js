@@ -6,6 +6,7 @@ import { debounce, isEmpty } from "lodash";
 import axios from "axios";
 import { useVT } from "virtualizedtableforantd4";
 import Link from "next/link";
+import { requestGet } from "../src/apis/instance";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -17,8 +18,7 @@ export default function Home() {
   const fetchData = (value) => {
     setLoading(true);
     let url = `https://dummyjson.com/products/?limit=${value ? value : limit}`;
-    axios
-      .get(url)
+    requestGet(url)
       .then((res) => setProducts(res.data.products))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -31,8 +31,7 @@ export default function Home() {
       fetchData();
     } else {
       let url = `https://dummyjson.com/products/search?q=${key}`;
-      axios
-        .get(url)
+      requestGet(url)
         .then((res) => setProducts(res.data.products))
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
@@ -61,7 +60,7 @@ export default function Home() {
         }
       },
       scroll: {
-        y: 500,
+        y: 400,
       },
       debug: false,
     }),
@@ -108,7 +107,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <Input placeholder="Search Products" onKeyUp={handleInputOnchange} />
+      <Input placeholder='Search Products' onKeyUp={handleInputOnchange} />
 
       <div className={styles.content}>
         <Skeleton loading={loading} active>
@@ -120,7 +119,7 @@ export default function Home() {
               pagination={false}
               scroll={{
                 scrollToFirstRowOnChange: false,
-                y: 500,
+                y: 400,
               }}
             />
           ) : (

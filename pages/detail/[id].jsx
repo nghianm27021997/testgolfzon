@@ -6,6 +6,11 @@ import axios from "axios";
 import styles from "../../styles/Detail.module.css";
 import { isEmpty } from "lodash";
 import Image from "next/image";
+import { requestGet } from "../../src/apis/instance";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+
+import LazyLoad from "react-lazy-load";
 
 const Detail = () => {
   const router = useRouter();
@@ -18,14 +23,11 @@ const Detail = () => {
   const [disabledNext, setDisabledNext] = useState(false);
 
   const getDetail = (id) => {
-    setLoading(true)
+    setLoading(true);
     if (id) {
       let url = `https://dummyjson.com/products/${id}`;
-      axios
-        .get(url)
-        .then((res) => {
-          setDataDetail(res.data);
-        })
+      requestGet(url)
+        .then((res) => setDataDetail(res.data))
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
     }
@@ -46,78 +48,73 @@ const Detail = () => {
 
   return (
     <>
-      <Button type="primary">
-        <Link href="/">Back</Link>
+      <Button type='primary'>
+        <Link href='/'>Back</Link>
       </Button>
-      <Skeleton loading={loading} active>
-        {!isEmpty(dataDetail) && (
-          <>
-            <div>
-              {/* {
-              <div className={styles.lazyloadImage}>
-                {dataDetail.images.map((image) => (
-                  <LazyLoadImage width="200" height="200" src={image} scrollPosition={scrollPosition}/>
-                ))}
-              </div>
-            } */}
+      {!isEmpty(dataDetail) && (
+        <>
+          {
+            <div className={styles.lazyloadImage}>
+              {dataDetail.images.map((image, index) => (
+                <LazyLoad height={200 + index * 150} key={index}>
+                  <img src={image} alt='image' />
+                </LazyLoad>
+              ))}
             </div>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Title</th>
-                  <th>Brand</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Rating</th>
-                  <th>Stock</th>
-                  <th>DiscountPercentage</th>
-                  <th>Description</th>
-                  <th>Thumbnail</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{dataDetail.id ?? ""}</td>
-                  <td>{dataDetail.title ?? ""}</td>
-                  <td>{dataDetail.brand ?? ""}</td>
-                  <td>{dataDetail.category ?? ""}</td>
-                  <td>{dataDetail.price ?? ""}</td>
-                  <td>{dataDetail.rating ?? ""}</td>
-                  <td>{dataDetail.stock ?? ""}</td>
-                  <td>{dataDetail.discountPercentage ?? ""}</td>
-                  <td>{dataDetail.description ?? ""}</td>
-                  <td>
-                    <img
-                      src={dataDetail.thumbnail ?? ""}
-                      width={150}
-                      height={150}
-                      alt="Image Alt"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div className={styles.divButton}>
-              <Button
-                className={styles.buttonNext}
-                type="primary"
-                onClick={previousPage}
-                disabled={idDetail == 1}
-              >
-                Previous
-              </Button>
-              <Button
-                disabled={idDetail == 30}
-                type="primary"
-                onClick={nextPage}
-              >
-                Next
-              </Button>
-            </div>
-          </>
-        )}
-      </Skeleton>
+          }
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Brand</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Rating</th>
+                <th>Stock</th>
+                <th>DiscountPercentage</th>
+                <th>Description</th>
+                <th>Thumbnail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{dataDetail.id ?? ""}</td>
+                <td>{dataDetail.title ?? ""}</td>
+                <td>{dataDetail.brand ?? ""}</td>
+                <td>{dataDetail.category ?? ""}</td>
+                <td>{dataDetail.price ?? ""}</td>
+                <td>{dataDetail.rating ?? ""}</td>
+                <td>{dataDetail.stock ?? ""}</td>
+                <td>{dataDetail.discountPercentage ?? ""}</td>
+                <td>{dataDetail.description ?? ""}</td>
+                <td>
+                  <img
+                    src={dataDetail.thumbnail ?? ""}
+                    alt='Image Alt'
+                    effect='blur'
+                    width={150}
+                    height={150}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div className={styles.divButton}>
+            <Button
+              className={styles.buttonNext}
+              type='primary'
+              onClick={previousPage}
+              disabled={idDetail == 1}
+            >
+              See Previous Product
+            </Button>
+            <Button disabled={idDetail == 30} type='primary' onClick={nextPage}>
+              See Next Product
+            </Button>
+          </div>
+        </>
+      )}
     </>
   );
 };
