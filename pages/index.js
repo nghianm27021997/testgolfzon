@@ -4,25 +4,43 @@ import { Input, Skeleton, Table } from "antd";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { debounce, isEmpty } from "lodash";
 import axios from "axios";
+import { useVT } from "virtualizedtableforantd4";
+import Link from "next/link";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [searchParams, setSearchParams] = useState("");
   const [loading, setLoading] = useState(true);
+  const [limit, setLimit] = useState(10);
 
-  //get all products with limit
-  const fetchData = (key) => {
-    setLoading(true)
-    let url = `https://dummyjson.com/products/?limit=10&skip=5&q=${searchParams}`;
+  //fetch data with limit and scroll
+  const fetchData = (value) => {
+    setLoading(true);
+    let url = `https://dummyjson.com/products/?limit=${value ? value : limit}`;
     axios
       .get(url)
-      .then((res) => console.log(res))
+      .then((res) => setProducts(res.data.products))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   };
 
+  //search data with key
+  const searchData = (key) => {
+    setLoading(true);
+    if (!key) {
+      fetchData();
+    } else {
+      let url = `https://dummyjson.com/products/search?q=${key}`;
+      axios
+        .get(url)
+        .then((res) => setProducts(res.data.products))
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+    }
+  };
+
   const debounceDropDown = useCallback(
-    debounce((nextValue) => fetchData(nextValue), 1500),
+    debounce((nextValue) => searchData(nextValue), 1000),
     []
   );
 
@@ -32,11 +50,35 @@ export default function Home() {
     debounceDropDown(value);
   };
 
+  const [vt] = useVT(
+    () => ({
+      onScroll: async ({ top, isEnd }) => {
+        if (isEnd) {
+          if (products && products.length < 30) {
+            await fetchData(limit + 10);
+            setLimit(limit + 10);
+          }
+        }
+      },
+      scroll: {
+        y: 500,
+      },
+      debug: false,
+    }),
+    [products]
+  );
+
   useEffect(() => {
-    fetchData(searchParams);
+    fetchData();
   }, []);
 
   const columns = useMemo(() => [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      render: (text) => <Link href={`detail/${text}`}>{text}</Link>,
+    },
     {
       title: "Brand",
       dataIndex: "brand",
@@ -68,13 +110,24 @@ export default function Home() {
     <div className={styles.container}>
       <Input placeholder="Search Products" onKeyUp={handleInputOnchange} />
 
-      {/* <div className={styles.content}>
+      <div className={styles.content}>
         <Skeleton loading={loading} active>
-          {!loading && !isEmpty(products) && (
-            <Table dataSource={products} columns={columns} />
+          {!loading && !isEmpty(products) ? (
+            <Table
+              dataSource={products}
+              columns={columns}
+              components={vt}
+              pagination={false}
+              scroll={{
+                scrollToFirstRowOnChange: false,
+                y: 500,
+              }}
+            />
+          ) : (
+            <span>No results</span>
           )}
         </Skeleton>
-      </div> */}
+      </div>
     </div>
   );
 }

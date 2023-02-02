@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  padding: 0 0.5rem;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,7 +31,6 @@
 .description {
   text-align: center;
 }
-
 
 .description {
   line-height: 1.5;
@@ -93,3 +92,5 @@
     flex-direction: column;
   }
 }
+
+
