@@ -3,7 +3,6 @@
   padding: 0 0.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 
@@ -47,6 +46,11 @@
 
   max-width: 800px;
   margin-top: 3rem;
+}
+
+.content {
+  margin-top: 2rem;
+  width: 100%;
 }
 
 .card {
