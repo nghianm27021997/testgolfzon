@@ -56,7 +56,7 @@ const Detail = () => {
           {
             <div className={styles.lazyloadImage}>
               {dataDetail.images.map((image, index) => (
-                <LazyLoad height={200 + index * 150} key={index}>
+                <LazyLoad height={200} key={index}>
                   <img src={image} alt='image' />
                 </LazyLoad>
               ))}
